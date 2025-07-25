@@ -15,7 +15,55 @@ export enum UserRole {
   POWER_USER = 'power_user',
   USER = 'user',
   SERVICE_DESK_AGENT = 'service_desk_agent',
-  SERVICE_DESK_MANAGER = 'service_desk_manager'
+  SERVICE_DESK_MANAGER = 'service_desk_manager',
+  SCHEDULER_ADMIN = 'scheduler_admin',
+  SCHEDULER_USER = 'scheduler_user'
+}
+
+export enum SystemPermission {
+  // Script permissions
+  CREATE_SCRIPT = 'create_script',
+  READ_SCRIPT = 'read_script',
+  UPDATE_SCRIPT = 'update_script',
+  DELETE_SCRIPT = 'delete_script',
+  EXECUTE_SCRIPT = 'execute_script',
+  
+  // User management permissions
+  CREATE_USER = 'create_user',
+  READ_USER = 'read_user',
+  UPDATE_USER = 'update_user',
+  DELETE_USER = 'delete_user',
+  MANAGE_PERMISSIONS = 'manage_permissions',
+  
+  // System permissions
+  VIEW_AUDIT_LOGS = 'view_audit_logs',
+  MANAGE_SYSTEM = 'manage_system',
+  
+  // Service Desk permissions
+  CREATE_TICKET = 'create_ticket',
+  READ_TICKET = 'read_ticket',
+  UPDATE_TICKET = 'update_ticket',
+  DELETE_TICKET = 'delete_ticket',
+  ASSIGN_TICKET = 'assign_ticket',
+  RESOLVE_TICKET = 'resolve_ticket',
+  MANAGE_QUEUES = 'manage_queues',
+  VIEW_ALL_TICKETS = 'view_all_tickets',
+  MANAGE_SLA_RULES = 'manage_sla_rules',
+  ESCALATE_TICKET = 'escalate_ticket',
+  
+  // Scheduling permissions
+  CREATE_SCHEDULE = 'create_schedule',
+  READ_SCHEDULE = 'read_schedule',
+  UPDATE_SCHEDULE = 'update_schedule',
+  DELETE_SCHEDULE = 'delete_schedule',
+  EXECUTE_SCHEDULED_TASK = 'execute_scheduled_task',
+  MANAGE_SCHEDULE_TEMPLATES = 'manage_schedule_templates',
+  VIEW_SCHEDULE_ANALYTICS = 'view_schedule_analytics',
+  MANAGE_SCHEDULE_CALENDARS = 'manage_schedule_calendars',
+  CREATE_WORKFLOW = 'create_workflow',
+  MANAGE_DEPENDENCIES = 'manage_dependencies',
+  VIEW_ALL_SCHEDULES = 'view_all_schedules',
+  CANCEL_SCHEDULED_EXECUTION = 'cancel_scheduled_execution'
 }
 
 // Service Desk specific types
@@ -1118,6 +1166,310 @@ export interface ShareBranding {
   custom_css?: string;
   footer_text?: string;
   header_text?: string;
+}
+
+// Scheduling Types
+export interface ScheduledTask {
+  id: string;
+  name: string;
+  description?: string;
+  script_id: string;
+  organization_id: string;
+  created_by: string;
+  schedule_type: ScheduleType;
+  schedule_config: ScheduleConfig;
+  parameters: Record<string, any>;
+  is_active: boolean;
+  last_run?: string;
+  next_run?: string;
+  run_count: number;
+  success_count: number;
+  failure_count: number;
+  max_runs?: number;
+  timeout_minutes: number;
+  retry_attempts: number;
+  retry_delay_minutes: number;
+  notification_config: NotificationConfig;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export enum ScheduleType {
+  CRON = 'cron',
+  INTERVAL = 'interval',
+  ONE_TIME = 'one_time',
+  EVENT_DRIVEN = 'event_driven'
+}
+
+export interface ScheduleConfig {
+  // For CRON schedules
+  cron_expression?: string;
+  timezone?: string;
+  
+  // For INTERVAL schedules
+  interval_minutes?: number;
+  interval_hours?: number;
+  interval_days?: number;
+  
+  // For ONE_TIME schedules
+  scheduled_time?: string;
+  
+  // For EVENT_DRIVEN schedules
+  event_type?: string;
+  event_conditions?: Record<string, any>;
+  
+  // Common options
+  start_date?: string;
+  end_date?: string;
+  days_of_week?: number[]; // 0-6, Sunday to Saturday
+  exclude_holidays?: boolean;
+  run_immediately?: boolean;
+}
+
+export interface NotificationConfig {
+  on_success: boolean;
+  on_failure: boolean;
+  on_timeout: boolean;
+  email_recipients: string[];
+  webhook_url?: string;
+  slack_webhook?: string;
+  teams_webhook?: string;
+}
+
+export interface ScheduledExecution {
+  id: string;
+  scheduled_task_id: string;
+  execution_id?: string;
+  status: ScheduledExecutionStatus;
+  scheduled_time: string;
+  started_at?: string;
+  completed_at?: string;
+  duration_ms?: number;
+  output?: string;
+  error_message?: string;
+  retry_count: number;
+  triggered_by: string; // 'schedule', 'manual', 'event'
+  created_at: string;
+  updated_at: string;
+}
+
+export enum ScheduledExecutionStatus {
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  TIMEOUT = 'timeout',
+  CANCELLED = 'cancelled',
+  SKIPPED = 'skipped'
+}
+
+export interface ScheduleTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: ScheduleCategory;
+  schedule_type: ScheduleType;
+  default_config: ScheduleConfig;
+  parameters_schema: Record<string, any>;
+  is_public: boolean;
+  created_by: string;
+  usage_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export enum ScheduleCategory {
+  MAINTENANCE = 'maintenance',
+  MONITORING = 'monitoring',
+  BACKUP = 'backup',
+  DEPLOYMENT = 'deployment',
+  REPORTING = 'reporting',
+  CLEANUP = 'cleanup',
+  CUSTOM = 'custom'
+}
+
+export interface ScheduleDependency {
+  id: string;
+  parent_task_id: string;
+  dependent_task_id: string;
+  dependency_type: DependencyType;
+  wait_for_completion: boolean;
+  continue_on_failure: boolean;
+  delay_minutes: number;
+  created_at: string;
+}
+
+export enum DependencyType {
+  SEQUENTIAL = 'sequential',
+  PARALLEL = 'parallel',
+  CONDITIONAL = 'conditional'
+}
+
+export interface ScheduleCalendar {
+  id: string;
+  name: string;
+  description?: string;
+  organization_id: string;
+  color: string;
+  is_default: boolean;
+  holidays: Holiday[];
+  business_hours: BusinessHours;
+  timezone: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Holiday {
+  date: string;
+  name: string;
+  is_recurring: boolean;
+  country_code?: string;
+}
+
+export interface BusinessHours {
+  monday: TimeRange;
+  tuesday: TimeRange;
+  wednesday: TimeRange;
+  thursday: TimeRange;
+  friday: TimeRange;
+  saturday: TimeRange;
+  sunday: TimeRange;
+}
+
+export interface TimeRange {
+  enabled: boolean;
+  start_time: string; // HH:MM format
+  end_time: string; // HH:MM format
+}
+
+export interface ScheduleMetrics {
+  total_tasks: number;
+  active_tasks: number;
+  completed_executions_today: number;
+  failed_executions_today: number;
+  success_rate_7d: number;
+  average_execution_time: number;
+  next_executions: ScheduledExecution[];
+  recent_failures: ScheduledExecution[];
+  resource_usage: ScheduleResourceUsage;
+}
+
+export interface ScheduleResourceUsage {
+  cpu_usage_percent: number;
+  memory_usage_mb: number;
+  disk_usage_mb: number;
+  network_usage_mb: number;
+  concurrent_executions: number;
+  queue_size: number;
+}
+
+export interface ScheduleAlert {
+  id: string;
+  type: ScheduleAlertType;
+  severity: AlertSeverity;
+  title: string;
+  message: string;
+  scheduled_task_id?: string;
+  execution_id?: string;
+  triggered_at: string;
+  acknowledged_at?: string;
+  acknowledged_by?: string;
+  resolved_at?: string;
+  metadata: Record<string, any>;
+}
+
+export enum ScheduleAlertType {
+  TASK_FAILED = 'task_failed',
+  TASK_TIMEOUT = 'task_timeout',
+  TASK_MISSED = 'task_missed',
+  HIGH_FAILURE_RATE = 'high_failure_rate',
+  RESOURCE_LIMIT = 'resource_limit',
+  DEPENDENCY_FAILED = 'dependency_failed',
+  SCHEDULE_CONFLICT = 'schedule_conflict'
+}
+
+export enum AlertSeverity {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+export interface ScheduleWorkflow {
+  id: string;
+  name: string;
+  description?: string;
+  organization_id: string;
+  created_by: string;
+  tasks: WorkflowTask[];
+  triggers: WorkflowTrigger[];
+  is_active: boolean;
+  version: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WorkflowTask {
+  id: string;
+  name: string;
+  script_id: string;
+  parameters: Record<string, any>;
+  position: { x: number; y: number };
+  dependencies: string[];
+  conditions: WorkflowCondition[];
+  timeout_minutes: number;
+  retry_attempts: number;
+}
+
+export interface WorkflowTrigger {
+  type: 'schedule' | 'webhook' | 'manual' | 'file_change' | 'api_call';
+  config: Record<string, any>;
+  is_active: boolean;
+}
+
+export interface WorkflowCondition {
+  type: 'success' | 'failure' | 'output_contains' | 'custom';
+  value: any;
+  operator: 'equals' | 'contains' | 'greater_than' | 'less_than';
+}
+
+export interface ScheduleReport {
+  id: string;
+  name: string;
+  type: ScheduleReportType;
+  period: ReportPeriod;
+  filters: ReportFilters;
+  data: any;
+  generated_at: string;
+  generated_by: string;
+  organization_id: string;
+}
+
+export enum ScheduleReportType {
+  EXECUTION_SUMMARY = 'execution_summary',
+  PERFORMANCE_ANALYSIS = 'performance_analysis',
+  FAILURE_ANALYSIS = 'failure_analysis',
+  RESOURCE_UTILIZATION = 'resource_utilization',
+  COMPLIANCE_REPORT = 'compliance_report'
+}
+
+export enum ReportPeriod {
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  QUARTERLY = 'quarterly',
+  YEARLY = 'yearly',
+  CUSTOM = 'custom'
+}
+
+export interface ReportFilters {
+  date_range: { start: string; end: string };
+  task_ids?: string[];
+  categories?: ScheduleCategory[];
+  status?: ScheduledExecutionStatus[];
+  created_by?: string[];
 }
 
 // Subscription & Billing Types
