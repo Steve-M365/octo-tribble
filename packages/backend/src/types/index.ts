@@ -181,6 +181,162 @@ export enum ScriptLanguage {
   BATCH = 'batch'
 }
 
+export enum ScriptCategory {
+  GENERAL = 'general',
+  USER_MANAGEMENT = 'user_management',
+  SYSTEM_MAINTENANCE = 'system_maintenance',
+  NETWORK = 'network',
+  SECURITY = 'security',
+  DIAGNOSTICS = 'diagnostics',
+  PERFORMANCE = 'performance',
+  BACKUP_RESTORE = 'backup_restore'
+}
+
+export enum DiagnosticCategory {
+  SYSTEM_INFO = 'system_info',
+  NETWORK_DIAGNOSTICS = 'network_diagnostics',
+  DISK_HEALTH = 'disk_health',
+  MEMORY_ANALYSIS = 'memory_analysis',
+  PERFORMANCE_MONITORING = 'performance_monitoring',
+  PROCESS_ANALYSIS = 'process_analysis',
+  SERVICE_STATUS = 'service_status',
+  LOG_ANALYSIS = 'log_analysis',
+  CONNECTIVITY_TEST = 'connectivity_test',
+  HARDWARE_INFO = 'hardware_info'
+}
+
+export interface DiagnosticTool {
+  id: string;
+  name: string;
+  description: string;
+  category: DiagnosticCategory;
+  supported_platforms: Platform[];
+  script_content: string;
+  script_language: ScriptLanguage;
+  execution_time_estimate: number; // seconds
+  requires_elevation: boolean;
+  output_format: 'json' | 'text' | 'html' | 'csv';
+  parameters: DiagnosticParameter[];
+  interpretation_guide: string;
+  troubleshooting_steps: TroubleshootingStep[];
+  is_built_in: boolean;
+  version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DiagnosticParameter extends ScriptParameter {
+  diagnostic_purpose: string;
+  common_values: string[];
+  impact_on_system: 'none' | 'low' | 'medium' | 'high';
+}
+
+export interface TroubleshootingStep {
+  condition: string;
+  description: string;
+  action: string;
+  severity: 'info' | 'warning' | 'error' | 'critical';
+  automated_fix_script_id?: string;
+}
+
+export enum Platform {
+  WINDOWS_10 = 'windows_10',
+  WINDOWS_11 = 'windows_11',
+  WINDOWS_SERVER_2016 = 'windows_server_2016',
+  WINDOWS_SERVER_2019 = 'windows_server_2019',
+  WINDOWS_SERVER_2022 = 'windows_server_2022',
+  MACOS_MONTEREY = 'macos_monterey',
+  MACOS_VENTURA = 'macos_ventura',
+  MACOS_SONOMA = 'macos_sonoma',
+  UBUNTU_18_04 = 'ubuntu_18_04',
+  UBUNTU_20_04 = 'ubuntu_20_04',
+  UBUNTU_22_04 = 'ubuntu_22_04'
+}
+
+export interface DiagnosticResult {
+  id: string;
+  diagnostic_tool_id: string;
+  execution_id: string;
+  ticket_id?: string;
+  platform: Platform;
+  raw_output: string;
+  parsed_results: DiagnosticData;
+  issues_found: DiagnosticIssue[];
+  recommendations: DiagnosticRecommendation[];
+  executed_by: string;
+  executed_at: string;
+  execution_duration: number;
+}
+
+export interface DiagnosticData {
+  summary: Record<string, any>;
+  metrics: DiagnosticMetric[];
+  status_checks: StatusCheck[];
+  resource_usage: ResourceUsage;
+}
+
+export interface DiagnosticMetric {
+  name: string;
+  value: number | string | boolean;
+  unit?: string;
+  threshold?: {
+    warning: number;
+    critical: number;
+  };
+  status: 'healthy' | 'warning' | 'critical' | 'unknown';
+}
+
+export interface StatusCheck {
+  component: string;
+  status: 'running' | 'stopped' | 'error' | 'unknown';
+  message: string;
+  details?: Record<string, any>;
+}
+
+export interface ResourceUsage {
+  cpu_percent: number;
+  memory_percent: number;
+  disk_usage: DiskUsage[];
+  network_interfaces: NetworkInterface[];
+}
+
+export interface DiskUsage {
+  drive: string;
+  total_gb: number;
+  used_gb: number;
+  free_gb: number;
+  percent_used: number;
+}
+
+export interface NetworkInterface {
+  name: string;
+  ip_address: string;
+  status: 'up' | 'down';
+  bytes_sent: number;
+  bytes_received: number;
+}
+
+export interface DiagnosticIssue {
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  category: string;
+  title: string;
+  description: string;
+  affected_component: string;
+  recommended_action: string;
+  automated_fix_available: boolean;
+  fix_script_id?: string;
+}
+
+export interface DiagnosticRecommendation {
+  priority: 'low' | 'medium' | 'high';
+  category: string;
+  title: string;
+  description: string;
+  implementation_steps: string[];
+  estimated_time_minutes: number;
+  risk_level: 'low' | 'medium' | 'high';
+}
+
 export interface ScriptParameter {
   name: string;
   type: ParameterType;
