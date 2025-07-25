@@ -13,6 +13,11 @@ import { scriptRoutes } from './routes/scripts';
 import { userRoutes } from './routes/users';
 import { executionRoutes } from './routes/execution';
 import { auditRoutes } from './routes/audit';
+import { sharingRoutes } from './routes/sharing';
+import { helpRoutes } from './routes/help';
+import { adminRoutes } from './routes/admin';
+import { diagnosticRoutes } from './routes/diagnostics';
+import { serviceDeskRoutes } from './routes/serviceDesk';
 import { setupWebSocket } from './websocket/handler';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
@@ -49,6 +54,11 @@ app.use('/api/scripts', scriptRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/execution', executionRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/sharing', sharingRoutes);
+app.use('/api/help', helpRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/diagnostics', diagnosticRoutes);
+app.use('/api/service-desk', serviceDeskRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

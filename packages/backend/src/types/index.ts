@@ -790,3 +790,332 @@ export interface NotificationCondition {
   condition_value: string;
   operator: 'equals' | 'contains' | 'greater_than' | 'less_than';
 }
+
+// Sharing and Deep Linking Types
+export interface ShareableLink {
+  id: string;
+  resource_type: ShareableResourceType;
+  resource_id: string;
+  share_token: string;
+  created_by: string;
+  created_at: string;
+  expires_at?: string;
+  access_level: ShareAccessLevel;
+  password_protected: boolean;
+  password_hash?: string;
+  max_uses?: number;
+  current_uses: number;
+  is_active: boolean;
+  title: string;
+  description?: string;
+  thumbnail_url?: string;
+  metadata: ShareMetadata;
+  access_log: ShareAccessLog[];
+}
+
+export enum ShareableResourceType {
+  SCRIPT = 'script',
+  SCRIPT_EXECUTION = 'script_execution',
+  DIAGNOSTIC_RESULT = 'diagnostic_result',
+  SERVICE_TICKET = 'service_ticket',
+  HELP_ARTICLE = 'help_article',
+  DASHBOARD_VIEW = 'dashboard_view',
+  SCRIPT_COLLECTION = 'script_collection',
+  EXECUTION_REPORT = 'execution_report',
+  AUDIT_REPORT = 'audit_report'
+}
+
+export enum ShareAccessLevel {
+  VIEW_ONLY = 'view_only',
+  EXECUTE = 'execute',
+  COMMENT = 'comment',
+  EDIT = 'edit'
+}
+
+export interface ShareMetadata {
+  script_language?: ScriptLanguage;
+  script_category?: ScriptCategory;
+  execution_status?: ExecutionStatus;
+  ticket_priority?: TicketPriority;
+  requires_authentication: boolean;
+  allowed_domains?: string[];
+  allowed_user_roles?: UserRole[];
+  custom_parameters?: Record<string, any>;
+}
+
+export interface ShareAccessLog {
+  id: string;
+  share_id: string;
+  accessed_by_ip: string;
+  accessed_by_user_id?: string;
+  accessed_by_email?: string;
+  accessed_at: string;
+  user_agent: string;
+  action_taken: ShareAction;
+  success: boolean;
+  error_message?: string;
+}
+
+export enum ShareAction {
+  VIEW = 'view',
+  EXECUTE = 'execute',
+  DOWNLOAD = 'download',
+  COMMENT = 'comment',
+  COPY_LINK = 'copy_link',
+  SHARE_FORWARD = 'share_forward'
+}
+
+export interface ShareRequest {
+  resource_type: ShareableResourceType;
+  resource_id: string;
+  access_level: ShareAccessLevel;
+  expires_in_hours?: number;
+  password?: string;
+  max_uses?: number;
+  title?: string;
+  description?: string;
+  allowed_domains?: string[];
+  allowed_user_roles?: UserRole[];
+  notify_on_access?: boolean;
+  custom_message?: string;
+}
+
+export interface ShareResponse {
+  share_id: string;
+  share_url: string;
+  qr_code_url: string;
+  short_url: string;
+  embed_code?: string;
+  expires_at?: string;
+  access_instructions: string;
+}
+
+// Deep Link Types
+export interface DeepLink {
+  id: string;
+  path: string;
+  parameters: Record<string, string>;
+  user_context?: UserContext;
+  created_at: string;
+  expires_at?: string;
+  is_temporary: boolean;
+}
+
+export interface UserContext {
+  user_id?: string;
+  role?: UserRole;
+  permissions?: string[];
+  session_data?: Record<string, any>;
+}
+
+// Script Collection for Sharing
+export interface ScriptCollection {
+  id: string;
+  name: string;
+  description: string;
+  created_by: string;
+  script_ids: string[];
+  tags: string[];
+  is_public: boolean;
+  is_featured: boolean;
+  category: ScriptCategory;
+  created_at: string;
+  updated_at: string;
+  view_count: number;
+  like_count: number;
+  download_count: number;
+  collaborators: CollectionCollaborator[];
+}
+
+export interface CollectionCollaborator {
+  user_id: string;
+  username: string;
+  role: 'viewer' | 'contributor' | 'admin';
+  added_at: string;
+  added_by: string;
+}
+
+// Quick Action Links
+export interface QuickActionLink {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  action_type: QuickActionType;
+  target_resource_id: string;
+  parameters: Record<string, any>;
+  requires_confirmation: boolean;
+  confirmation_message?: string;
+  success_message: string;
+  error_message: string;
+  is_active: boolean;
+  usage_count: number;
+  created_by: string;
+  created_at: string;
+}
+
+export enum QuickActionType {
+  EXECUTE_SCRIPT = 'execute_script',
+  RUN_DIAGNOSTIC = 'run_diagnostic',
+  CREATE_TICKET = 'create_ticket',
+  OPEN_HELP_ARTICLE = 'open_help_article',
+  NAVIGATE_TO_PAGE = 'navigate_to_page',
+  DOWNLOAD_REPORT = 'download_report',
+  EXPORT_DATA = 'export_data'
+}
+
+// URL Shortener for Better UX
+export interface ShortUrl {
+  id: string;
+  short_code: string;
+  original_url: string;
+  created_by: string;
+  created_at: string;
+  expires_at?: string;
+  click_count: number;
+  last_accessed?: string;
+  is_active: boolean;
+  custom_domain?: string;
+  analytics_enabled: boolean;
+}
+
+export interface UrlAnalytics {
+  short_url_id: string;
+  total_clicks: number;
+  unique_visitors: number;
+  clicks_by_date: ClicksByDate[];
+  referrers: Referrer[];
+  geographic_data: GeographicClick[];
+  devices: DeviceClick[];
+  browsers: BrowserClick[];
+}
+
+export interface ClicksByDate {
+  date: string;
+  clicks: number;
+  unique_visitors: number;
+}
+
+export interface Referrer {
+  domain: string;
+  clicks: number;
+  percentage: number;
+}
+
+export interface GeographicClick {
+  country: string;
+  country_code: string;
+  clicks: number;
+  percentage: number;
+}
+
+export interface DeviceClick {
+  device_type: 'desktop' | 'mobile' | 'tablet';
+  clicks: number;
+  percentage: number;
+}
+
+export interface BrowserClick {
+  browser: string;
+  version: string;
+  clicks: number;
+  percentage: number;
+}
+
+// Embed System for External Integration
+export interface EmbedConfig {
+  id: string;
+  resource_type: ShareableResourceType;
+  resource_id: string;
+  embed_type: EmbedType;
+  theme: 'light' | 'dark' | 'auto';
+  width: string;
+  height: string;
+  show_header: boolean;
+  show_footer: boolean;
+  allowed_domains: string[];
+  custom_css?: string;
+  custom_js?: string;
+  created_by: string;
+  created_at: string;
+  is_active: boolean;
+}
+
+export enum EmbedType {
+  IFRAME = 'iframe',
+  WIDGET = 'widget',
+  BUTTON = 'button',
+  CARD = 'card',
+  MODAL = 'modal'
+}
+
+// Social Sharing Integration
+export interface SocialShare {
+  platform: SocialPlatform;
+  share_url: string;
+  title: string;
+  description: string;
+  image_url?: string;
+  hashtags?: string[];
+  via?: string;
+}
+
+export enum SocialPlatform {
+  TWITTER = 'twitter',
+  LINKEDIN = 'linkedin',
+  FACEBOOK = 'facebook',
+  SLACK = 'slack',
+  TEAMS = 'teams',
+  EMAIL = 'email',
+  COPY_LINK = 'copy_link'
+}
+
+// Collaboration Features
+export interface SharedComment {
+  id: string;
+  share_id: string;
+  author_name: string;
+  author_email: string;
+  content: string;
+  created_at: string;
+  is_internal: boolean;
+  parent_comment_id?: string;
+  replies: SharedComment[];
+  attachments: CommentAttachment[];
+}
+
+export interface CommentAttachment {
+  id: string;
+  filename: string;
+  file_size: number;
+  mime_type: string;
+  storage_path: string;
+  uploaded_at: string;
+}
+
+// Share Templates
+export interface ShareTemplate {
+  id: string;
+  name: string;
+  description: string;
+  resource_type: ShareableResourceType;
+  default_access_level: ShareAccessLevel;
+  default_expires_hours: number;
+  default_message: string;
+  require_password: boolean;
+  require_email: boolean;
+  allowed_domains: string[];
+  custom_branding: ShareBranding;
+  is_default: boolean;
+  created_by: string;
+  created_at: string;
+}
+
+export interface ShareBranding {
+  logo_url?: string;
+  brand_color?: string;
+  custom_css?: string;
+  footer_text?: string;
+  header_text?: string;
+}

@@ -293,6 +293,286 @@ async function createTables(db: Database): Promise<void> {
   await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_priority ON service_tickets(priority)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON service_tickets(created_at)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_ticket_notes_ticket_id ON ticket_notes(ticket_id)`);
+
+  // Sharing system tables
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS shareable_links (
+      id TEXT PRIMARY KEY,
+      resource_type TEXT NOT NULL,
+      resource_id TEXT NOT NULL,
+      share_token TEXT UNIQUE NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      expires_at DATETIME,
+      access_level TEXT NOT NULL DEFAULT 'view_only',
+      password_protected BOOLEAN DEFAULT 0,
+      password_hash TEXT,
+      max_uses INTEGER,
+      current_uses INTEGER DEFAULT 0,
+      is_active BOOLEAN DEFAULT 1,
+      title TEXT NOT NULL,
+      description TEXT,
+      thumbnail_url TEXT,
+      metadata TEXT DEFAULT '{}',
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS share_access_logs (
+      id TEXT PRIMARY KEY,
+      share_id TEXT NOT NULL,
+      accessed_by_ip TEXT NOT NULL,
+      accessed_by_user_id TEXT,
+      accessed_by_email TEXT,
+      accessed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      user_agent TEXT,
+      action_taken TEXT NOT NULL,
+      success BOOLEAN DEFAULT 1,
+      error_message TEXT,
+      FOREIGN KEY (share_id) REFERENCES shareable_links(id),
+      FOREIGN KEY (accessed_by_user_id) REFERENCES users(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS quick_action_links (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      icon TEXT NOT NULL,
+      color TEXT NOT NULL,
+      action_type TEXT NOT NULL,
+      target_resource_id TEXT NOT NULL,
+      parameters TEXT DEFAULT '{}',
+      requires_confirmation BOOLEAN DEFAULT 0,
+      confirmation_message TEXT,
+      success_message TEXT NOT NULL,
+      error_message TEXT NOT NULL,
+      is_active BOOLEAN DEFAULT 1,
+      usage_count INTEGER DEFAULT 0,
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS short_urls (
+      id TEXT PRIMARY KEY,
+      short_code TEXT UNIQUE NOT NULL,
+      original_url TEXT NOT NULL,
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      expires_at DATETIME,
+      click_count INTEGER DEFAULT 0,
+      last_accessed DATETIME,
+      is_active BOOLEAN DEFAULT 1,
+      custom_domain TEXT,
+      analytics_enabled BOOLEAN DEFAULT 1,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  // Help system tables
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS help_articles (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      category TEXT NOT NULL,
+      subcategory TEXT,
+      tags TEXT DEFAULT '[]',
+      difficulty_level TEXT NOT NULL DEFAULT 'beginner',
+      estimated_read_time_minutes INTEGER DEFAULT 5,
+      target_roles TEXT DEFAULT '[]',
+      prerequisites TEXT DEFAULT '[]',
+      related_articles TEXT DEFAULT '[]',
+      video_url TEXT,
+      interactive_demo_url TEXT,
+      created_by TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      version TEXT DEFAULT '1.0',
+      view_count INTEGER DEFAULT 0,
+      helpful_votes INTEGER DEFAULT 0,
+      unhelpful_votes INTEGER DEFAULT 0,
+      is_published BOOLEAN DEFAULT 0,
+      is_featured BOOLEAN DEFAULT 0,
+      FOREIGN KEY (created_by) REFERENCES users(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS help_attachments (
+      id TEXT PRIMARY KEY,
+      article_id TEXT NOT NULL,
+      filename TEXT NOT NULL,
+      file_type TEXT NOT NULL,
+      file_size_bytes INTEGER NOT NULL,
+      storage_path TEXT NOT NULL,
+      description TEXT,
+      uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (article_id) REFERENCES help_articles(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS contextual_help (
+      id TEXT PRIMARY KEY,
+      page_path TEXT NOT NULL,
+      user_role TEXT NOT NULL,
+      element_selector TEXT NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      help_type TEXT NOT NULL DEFAULT 'tooltip',
+      trigger_event TEXT NOT NULL DEFAULT 'hover',
+      position TEXT NOT NULL DEFAULT 'top',
+      priority INTEGER DEFAULT 1,
+      related_article_id TEXT,
+      is_active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (related_article_id) REFERENCES help_articles(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS user_feedback (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      article_id TEXT,
+      page_path TEXT,
+      feedback_type TEXT NOT NULL,
+      rating INTEGER,
+      comment TEXT,
+      category TEXT,
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      reviewed_by TEXT,
+      reviewed_at DATETIME,
+      response TEXT,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (article_id) REFERENCES help_articles(id),
+      FOREIGN KEY (reviewed_by) REFERENCES users(id)
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS guided_tours (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      target_role TEXT NOT NULL,
+      trigger_condition TEXT NOT NULL DEFAULT 'manual',
+      steps TEXT NOT NULL DEFAULT '[]',
+      is_active BOOLEAN DEFAULT 1,
+      completion_rate REAL DEFAULT 0,
+      average_completion_time_minutes INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS tour_progress (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      tour_id TEXT NOT NULL,
+      current_step INTEGER DEFAULT 0,
+      completed_steps TEXT DEFAULT '[]',
+      started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_activity DATETIME DEFAULT CURRENT_TIMESTAMP,
+      completed_at DATETIME,
+      abandoned BOOLEAN DEFAULT 0,
+      FOREIGN KEY (user_id) REFERENCES users(id),
+      FOREIGN KEY (tour_id) REFERENCES guided_tours(id),
+      UNIQUE(user_id, tour_id)
+    )
+  `);
+
+  // Diagnostic tools tables
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS diagnostic_tools (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      category TEXT NOT NULL,
+      supported_platforms TEXT NOT NULL DEFAULT '[]',
+      script_content TEXT NOT NULL,
+      script_language TEXT NOT NULL,
+      execution_time_estimate INTEGER DEFAULT 30,
+      requires_elevation BOOLEAN DEFAULT 0,
+      output_format TEXT NOT NULL DEFAULT 'json',
+      parameters TEXT DEFAULT '[]',
+      interpretation_guide TEXT,
+      troubleshooting_steps TEXT DEFAULT '[]',
+      is_built_in BOOLEAN DEFAULT 1,
+      version TEXT DEFAULT '1.0',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS diagnostic_results (
+      id TEXT PRIMARY KEY,
+      diagnostic_tool_id TEXT NOT NULL,
+      execution_id TEXT NOT NULL,
+      ticket_id TEXT,
+      platform TEXT NOT NULL,
+      raw_output TEXT NOT NULL,
+      parsed_results TEXT DEFAULT '{}',
+      issues_found TEXT DEFAULT '[]',
+      recommendations TEXT DEFAULT '[]',
+      executed_by TEXT NOT NULL,
+      executed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      execution_duration INTEGER,
+      FOREIGN KEY (diagnostic_tool_id) REFERENCES diagnostic_tools(id),
+      FOREIGN KEY (execution_id) REFERENCES script_executions(id),
+      FOREIGN KEY (ticket_id) REFERENCES service_tickets(id),
+      FOREIGN KEY (executed_by) REFERENCES users(id)
+    )
+  `);
+
+  // System telemetry tables
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS system_metrics (
+      id TEXT PRIMARY KEY,
+      metric_type TEXT NOT NULL,
+      metric_name TEXT NOT NULL,
+      metric_value REAL NOT NULL,
+      metric_unit TEXT,
+      tags TEXT DEFAULT '{}',
+      recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS performance_logs (
+      id TEXT PRIMARY KEY,
+      endpoint TEXT NOT NULL,
+      method TEXT NOT NULL,
+      response_time_ms INTEGER NOT NULL,
+      status_code INTEGER NOT NULL,
+      user_id TEXT,
+      ip_address TEXT,
+      user_agent TEXT,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    )
+  `);
+
+  // Additional indexes for new tables
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_shareable_links_token ON shareable_links(share_token)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_shareable_links_created_by ON shareable_links(created_by)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_share_access_logs_share_id ON share_access_logs(share_id)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_short_urls_code ON short_urls(short_code)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_help_articles_category ON help_articles(category)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_help_articles_published ON help_articles(is_published)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_contextual_help_page ON contextual_help(page_path)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_diagnostic_results_tool_id ON diagnostic_results(diagnostic_tool_id)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_system_metrics_type ON system_metrics(metric_type)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_performance_logs_endpoint ON performance_logs(endpoint)`);
 }
 
 async function createDefaultAdmin(db: Database): Promise<void> {
