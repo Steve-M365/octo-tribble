@@ -5,6 +5,8 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/scriptflow/scriptflow)](https://hub.docker.com/r/scriptflow/scriptflow)
 [![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.gg/scriptflow)
 [![Contributors](https://img.shields.io/github/contributors/scriptflow/scriptflow)](https://github.com/scriptflow/scriptflow/graphs/contributors)
+[![Test Coverage](https://img.shields.io/codecov/c/github/scriptflow/scriptflow)](https://codecov.io/gh/scriptflow/scriptflow)
+[![Security Rating](https://img.shields.io/snyk/vulnerabilities/github/scriptflow/scriptflow)](https://snyk.io/test/github/scriptflow/scriptflow)
 
 > **A modern, secure, and user-friendly platform for managing and executing scripts across Windows, macOS, and Linux environments with enterprise-grade features.**
 
@@ -20,18 +22,22 @@ ScriptFlow empowers IT teams and service desks to centralize script management, 
 - **Mobile Responsive** - Access from any device
 
 ### 🛠️ **For IT Teams**
-- **Multi-Platform Support** - Windows (PowerShell), macOS/Linux (Bash), Ansible
-- **Built-in IDE** - Monaco editor with syntax highlighting and IntelliSense
-- **Version Control** - Track script changes with diff comparison
+- **Multi-Platform Support** - Windows (PowerShell), macOS/Linux (Bash), Ansible, Python
+- **Built-in IDE** - Monaco editor with syntax highlighting, IntelliSense, and AI assistance
+- **Version Control** - Track script changes with diff comparison and Git integration
 - **Secure Execution** - Elevated privileges without credential exposure
 - **Service Desk Integration** - Seamless ticket workflow integration
+- **Advanced Scheduling** - CRON, interval, and event-driven automation
+- **Performance Monitoring** - Real-time metrics and resource tracking
 
 ### 🏢 **For Organizations**
 - **Role-Based Access Control** - Granular permissions and user management
-- **Comprehensive Auditing** - Complete activity logs for compliance
+- **Comprehensive Auditing** - Complete activity logs for compliance (NIST, SOX, HIPAA)
 - **Diagnostic Tools** - Built-in system diagnostics for Windows and macOS
 - **Sharing & Collaboration** - Share scripts and results with secure links
 - **Enterprise SSO** - LDAP, Active Directory, and SAML integration
+- **AI-Powered Features** - Script generation, validation, and optimization
+- **Commercial Support** - Freemium and enterprise subscription models
 
 ## 🚀 Quick Start
 
@@ -222,24 +228,31 @@ While ScriptFlow is open source and free to use, we offer commercial services:
 ### Current Version (1.0)
 - ✅ Core script management and execution
 - ✅ Multi-platform support (Windows, macOS, Linux)
-- ✅ Web-based IDE with syntax highlighting
-- ✅ Role-based access control
-- ✅ Audit logging and compliance features
-- ✅ Service desk integration
+- ✅ Web-based IDE with syntax highlighting and AI assistance
+- ✅ Role-based access control with 7 distinct roles
+- ✅ Comprehensive audit logging and compliance features
+- ✅ Service desk integration with ticket management
+- ✅ Advanced scheduling system (CRON, interval, event-driven)
+- ✅ Sharing and collaboration features
+- ✅ Help system with contextual assistance
+- ✅ Commercial billing and subscription management
 
 ### Upcoming Features (1.1-1.2)
-- 🔄 **Advanced Diagnostics** - Enhanced system diagnostic tools
-- 🔄 **Workflow Engine** - Multi-step script workflows
-- 🔄 **API Improvements** - GraphQL API and webhooks
-- 🔄 **Mobile App** - Native mobile applications
-- 🔄 **Advanced Analytics** - Usage analytics and reporting
+- 🔄 **Enhanced AI Features** - Advanced script validation and optimization
+- 🔄 **Workflow Engine** - Visual workflow designer and execution
+- 🔄 **API Improvements** - GraphQL API and enhanced webhooks
+- 🔄 **Mobile App** - Native iOS and Android applications
+- 🔄 **Advanced Analytics** - ML-powered insights and predictions
+- 🔄 **Performance Optimization** - Auto-scaling and load balancing
+- 🔄 **Extended Integrations** - Slack, Teams, ServiceNow, and more
 
 ### Future Plans (2.0+)
-- 🎯 **AI-Powered Features** - Script generation and optimization
-- 🎯 **Kubernetes Integration** - Native Kubernetes support
-- 🎯 **Advanced Scheduling** - Cron-like scheduling with dependencies
-- 🎯 **Plugin System** - Third-party plugin architecture
-- 🎯 **Multi-Tenancy** - Advanced organization management
+- 🎯 **AI-Powered Script Generation** - Natural language to script conversion
+- 🎯 **Kubernetes Integration** - Native container orchestration
+- 🎯 **Plugin Ecosystem** - Third-party plugin marketplace
+- 🎯 **Multi-Tenancy** - Advanced organization and tenant management
+- 🎯 **Edge Computing** - Distributed execution capabilities
+- 🎯 **Compliance Automation** - Automated compliance reporting and validation
 
 View our [detailed roadmap](https://github.com/scriptflow/scriptflow/projects/1) for more information.
 
