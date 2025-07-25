@@ -168,6 +168,114 @@ async function createTables(db: Database): Promise<void> {
     )
   `);
 
+  // Service desk tickets table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS service_tickets (
+      id TEXT PRIMARY KEY,
+      ticket_number TEXT UNIQUE NOT NULL,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      requester_id TEXT,
+      requester_email TEXT NOT NULL,
+      requester_name TEXT NOT NULL,
+      assigned_agent_id TEXT,
+      priority TEXT NOT NULL DEFAULT 'medium',
+      status TEXT NOT NULL DEFAULT 'new',
+      category TEXT NOT NULL DEFAULT 'other',
+      requested_script_id TEXT,
+      script_parameters TEXT DEFAULT '{}',
+      execution_id TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      resolved_at DATETIME,
+      due_date DATETIME,
+      escalation_level INTEGER DEFAULT 0,
+      FOREIGN KEY (requester_id) REFERENCES users(id),
+      FOREIGN KEY (assigned_agent_id) REFERENCES users(id),
+      FOREIGN KEY (requested_script_id) REFERENCES scripts(id),
+      FOREIGN KEY (execution_id) REFERENCES script_executions(id)
+    )
+  `);
+
+  // Ticket notes table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS ticket_notes (
+      id TEXT PRIMARY KEY,
+      ticket_id TEXT NOT NULL,
+      author_id TEXT NOT NULL,
+      author_name TEXT NOT NULL,
+      content TEXT NOT NULL,
+      is_internal BOOLEAN DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (ticket_id) REFERENCES service_tickets(id),
+      FOREIGN KEY (author_id) REFERENCES users(id)
+    )
+  `);
+
+  // Ticket attachments table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS ticket_attachments (
+      id TEXT PRIMARY KEY,
+      ticket_id TEXT NOT NULL,
+      note_id TEXT,
+      filename TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      mime_type TEXT NOT NULL,
+      storage_path TEXT NOT NULL,
+      uploaded_by TEXT NOT NULL,
+      uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (ticket_id) REFERENCES service_tickets(id),
+      FOREIGN KEY (note_id) REFERENCES ticket_notes(id),
+      FOREIGN KEY (uploaded_by) REFERENCES users(id)
+    )
+  `);
+
+  // Service desk queues table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS service_desk_queues (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      default_assignee_id TEXT,
+      allowed_categories TEXT DEFAULT '[]',
+      is_active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (default_assignee_id) REFERENCES users(id)
+    )
+  `);
+
+  // SLA rules table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS sla_rules (
+      id TEXT PRIMARY KEY,
+      queue_id TEXT NOT NULL,
+      priority TEXT NOT NULL,
+      response_time_hours INTEGER NOT NULL,
+      resolution_time_hours INTEGER NOT NULL,
+      business_hours_only BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (queue_id) REFERENCES service_desk_queues(id)
+    )
+  `);
+
+  // Escalation rules table
+  await db.run(`
+    CREATE TABLE IF NOT EXISTS escalation_rules (
+      id TEXT PRIMARY KEY,
+      queue_id TEXT NOT NULL,
+      trigger_condition TEXT NOT NULL DEFAULT 'time_based',
+      escalation_time_hours INTEGER NOT NULL,
+      escalate_to_user_id TEXT,
+      escalate_to_queue_id TEXT,
+      notification_template TEXT,
+      is_active BOOLEAN DEFAULT 1,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (queue_id) REFERENCES service_desk_queues(id),
+      FOREIGN KEY (escalate_to_user_id) REFERENCES users(id),
+      FOREIGN KEY (escalate_to_queue_id) REFERENCES service_desk_queues(id)
+    )
+  `);
+
   // Create indexes for better performance
   await db.run(`CREATE INDEX IF NOT EXISTS idx_users_username ON users(username)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)`);
@@ -177,6 +285,14 @@ async function createTables(db: Database): Promise<void> {
   await db.run(`CREATE INDEX IF NOT EXISTS idx_executions_executed_by ON script_executions(executed_by)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_audit_user_id ON audit_logs(user_id)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp)`);
+  
+  // Service desk indexes
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_status ON service_tickets(status)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_assigned_agent ON service_tickets(assigned_agent_id)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_requester ON service_tickets(requester_email)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_priority ON service_tickets(priority)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON service_tickets(created_at)`);
+  await db.run(`CREATE INDEX IF NOT EXISTS idx_ticket_notes_ticket_id ON ticket_notes(ticket_id)`);
 }
 
 async function createDefaultAdmin(db: Database): Promise<void> {
