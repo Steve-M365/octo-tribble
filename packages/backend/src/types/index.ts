@@ -1119,3 +1119,455 @@ export interface ShareBranding {
   footer_text?: string;
   header_text?: string;
 }
+
+// Subscription & Billing Types
+export interface Subscription {
+  id: string;
+  organization_id: string;
+  plan_id: string;
+  status: SubscriptionStatus;
+  current_period_start: string;
+  current_period_end: string;
+  trial_start?: string;
+  trial_end?: string;
+  canceled_at?: string;
+  ended_at?: string;
+  stripe_subscription_id?: string;
+  stripe_customer_id?: string;
+  payment_method_id?: string;
+  created_at: string;
+  updated_at: string;
+  metadata: SubscriptionMetadata;
+}
+
+export enum SubscriptionStatus {
+  TRIAL = 'trial',
+  ACTIVE = 'active',
+  PAST_DUE = 'past_due',
+  CANCELED = 'canceled',
+  UNPAID = 'unpaid',
+  INCOMPLETE = 'incomplete',
+  INCOMPLETE_EXPIRED = 'incomplete_expired'
+}
+
+export interface SubscriptionMetadata {
+  upgrade_reason?: string;
+  downgrade_reason?: string;
+  billing_contact_email?: string;
+  purchase_order_number?: string;
+  custom_fields?: Record<string, any>;
+}
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  plan_type: PlanType;
+  tier: PlanTier;
+  price_monthly: number;
+  price_yearly: number;
+  currency: string;
+  features: PlanFeatures;
+  limits: PlanLimits;
+  is_active: boolean;
+  is_popular: boolean;
+  stripe_price_id_monthly?: string;
+  stripe_price_id_yearly?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export enum PlanType {
+  INDIVIDUAL = 'individual',
+  TEAM = 'team',
+  ENTERPRISE = 'enterprise'
+}
+
+export enum PlanTier {
+  FREE = 'free',
+  STARTER = 'starter',
+  PROFESSIONAL = 'professional',
+  BUSINESS = 'business',
+  ENTERPRISE = 'enterprise'
+}
+
+export interface PlanFeatures {
+  unlimited_scripts: boolean;
+  unlimited_executions: boolean;
+  advanced_diagnostics: boolean;
+  priority_support: boolean;
+  sso_integration: boolean;
+  audit_logs: boolean;
+  api_access: boolean;
+  custom_branding: boolean;
+  advanced_analytics: boolean;
+  multi_platform_support: boolean;
+  service_desk_integration: boolean;
+  custom_integrations: boolean;
+  dedicated_support: boolean;
+  on_premise_deployment: boolean;
+}
+
+export interface PlanLimits {
+  max_users: number;
+  max_scripts: number;
+  max_executions_per_day: number;
+  max_executions_per_month: number;
+  max_storage_gb: number;
+  max_api_calls_per_day: number;
+  max_concurrent_executions: number;
+  support_response_time_hours: number;
+}
+
+// Organization & Team Management
+export interface Organization {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  website?: string;
+  industry?: string;
+  company_size: CompanySize;
+  billing_email: string;
+  subscription_id?: string;
+  owner_id: string;
+  settings: OrganizationSettings;
+  created_at: string;
+  updated_at: string;
+  is_active: boolean;
+}
+
+export enum CompanySize {
+  STARTUP = 'startup',        // 1-10 employees
+  SMALL = 'small',           // 11-50 employees  
+  MEDIUM = 'medium',         // 51-200 employees
+  LARGE = 'large',           // 201-1000 employees
+  ENTERPRISE = 'enterprise'   // 1000+ employees
+}
+
+export interface OrganizationSettings {
+  allow_user_registration: boolean;
+  require_email_verification: boolean;
+  enforce_2fa: boolean;
+  session_timeout_minutes: number;
+  allowed_domains: string[];
+  branding: OrganizationBranding;
+  integrations: OrganizationIntegrations;
+}
+
+export interface OrganizationBranding {
+  logo_url?: string;
+  primary_color?: string;
+  secondary_color?: string;
+  custom_css?: string;
+  favicon_url?: string;
+}
+
+export interface OrganizationIntegrations {
+  slack_webhook_url?: string;
+  teams_webhook_url?: string;
+  jira_config?: Record<string, any>;
+  servicenow_config?: Record<string, any>;
+  ldap_config?: Record<string, any>;
+}
+
+export interface OrganizationMember {
+  id: string;
+  organization_id: string;
+  user_id: string;
+  role: OrganizationRole;
+  status: MemberStatus;
+  invited_by: string;
+  invited_at: string;
+  joined_at?: string;
+  last_active?: string;
+  permissions: MemberPermissions;
+}
+
+export enum OrganizationRole {
+  OWNER = 'owner',
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  MEMBER = 'member',
+  VIEWER = 'viewer'
+}
+
+export enum MemberStatus {
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  SUSPENDED = 'suspended',
+  REMOVED = 'removed'
+}
+
+export interface MemberPermissions {
+  can_manage_users: boolean;
+  can_manage_billing: boolean;
+  can_create_scripts: boolean;
+  can_execute_scripts: boolean;
+  can_manage_integrations: boolean;
+  can_view_analytics: boolean;
+  can_manage_settings: boolean;
+}
+
+// Usage Tracking & Billing
+export interface UsageRecord {
+  id: string;
+  organization_id: string;
+  user_id: string;
+  resource_type: UsageResourceType;
+  resource_id?: string;
+  quantity: number;
+  unit: UsageUnit;
+  recorded_at: string;
+  billing_period: string; // YYYY-MM format
+  metadata: UsageMetadata;
+}
+
+export enum UsageResourceType {
+  SCRIPT_EXECUTION = 'script_execution',
+  API_CALL = 'api_call',
+  STORAGE = 'storage',
+  USER_SEAT = 'user_seat',
+  DIAGNOSTIC_RUN = 'diagnostic_run',
+  DATA_EXPORT = 'data_export'
+}
+
+export enum UsageUnit {
+  COUNT = 'count',
+  BYTES = 'bytes',
+  MINUTES = 'minutes',
+  HOURS = 'hours'
+}
+
+export interface UsageMetadata {
+  script_language?: ScriptLanguage;
+  execution_duration_seconds?: number;
+  elevated_privilege?: boolean;
+  platform?: Platform;
+  success?: boolean;
+}
+
+export interface UsageSummary {
+  organization_id: string;
+  billing_period: string;
+  executions_used: number;
+  executions_limit: number;
+  api_calls_used: number;
+  api_calls_limit: number;
+  storage_used_gb: number;
+  storage_limit_gb: number;
+  active_users: number;
+  user_limit: number;
+  overage_charges: OverageCharges;
+}
+
+export interface OverageCharges {
+  executions_overage: number;
+  executions_overage_cost: number;
+  api_calls_overage: number;
+  api_calls_overage_cost: number;
+  storage_overage_gb: number;
+  storage_overage_cost: number;
+  total_overage_cost: number;
+}
+
+// Payment & Billing
+export interface PaymentMethod {
+  id: string;
+  organization_id: string;
+  stripe_payment_method_id: string;
+  type: PaymentMethodType;
+  card_brand?: string;
+  card_last4?: string;
+  card_exp_month?: number;
+  card_exp_year?: number;
+  is_default: boolean;
+  created_at: string;
+}
+
+export enum PaymentMethodType {
+  CARD = 'card',
+  BANK_ACCOUNT = 'bank_account',
+  PAYPAL = 'paypal'
+}
+
+export interface Invoice {
+  id: string;
+  organization_id: string;
+  subscription_id: string;
+  stripe_invoice_id?: string;
+  invoice_number: string;
+  status: InvoiceStatus;
+  amount_due: number;
+  amount_paid: number;
+  currency: string;
+  due_date: string;
+  paid_at?: string;
+  period_start: string;
+  period_end: string;
+  line_items: InvoiceLineItem[];
+  created_at: string;
+}
+
+export enum InvoiceStatus {
+  DRAFT = 'draft',
+  OPEN = 'open',
+  PAID = 'paid',
+  VOID = 'void',
+  UNCOLLECTIBLE = 'uncollectible'
+}
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unit_amount: number;
+  amount: number;
+  period_start?: string;
+  period_end?: string;
+  metadata?: Record<string, any>;
+}
+
+// Freemium Limitations & Upgrade Prompts
+export interface UsageLimitCheck {
+  resource_type: UsageResourceType;
+  current_usage: number;
+  limit: number;
+  remaining: number;
+  percentage_used: number;
+  is_limit_reached: boolean;
+  is_near_limit: boolean; // 80% threshold
+  reset_date?: string;
+  upgrade_required: boolean;
+}
+
+export interface UpgradePrompt {
+  id: string;
+  user_id: string;
+  organization_id: string;
+  trigger_event: UpgradeTrigger;
+  feature_requested: string;
+  current_plan: PlanTier;
+  recommended_plan: PlanTier;
+  prompt_type: PromptType;
+  shown_at: string;
+  dismissed_at?: string;
+  converted_at?: string;
+  conversion_plan?: string;
+}
+
+export enum UpgradeTrigger {
+  EXECUTION_LIMIT_REACHED = 'execution_limit_reached',
+  USER_LIMIT_REACHED = 'user_limit_reached',
+  STORAGE_LIMIT_REACHED = 'storage_limit_reached',
+  FEATURE_LOCKED = 'feature_locked',
+  API_LIMIT_REACHED = 'api_limit_reached'
+}
+
+export enum PromptType {
+  SOFT_POPUP = 'soft_popup',
+  MODAL = 'modal',
+  BANNER = 'banner',
+  INLINE = 'inline',
+  EMAIL = 'email'
+}
+
+// Billing Analytics & Metrics
+export interface BillingAnalytics {
+  organization_id: string;
+  period: string;
+  revenue: RevenueMetrics;
+  usage: UsageAnalytics;
+  conversion: ConversionMetrics;
+  churn: ChurnMetrics;
+}
+
+export interface RevenueMetrics {
+  total_revenue: number;
+  recurring_revenue: number;
+  one_time_revenue: number;
+  overage_revenue: number;
+  refunds: number;
+  net_revenue: number;
+}
+
+export interface UsageAnalytics {
+  total_executions: number;
+  executions_by_plan: Record<PlanTier, number>;
+  peak_usage_day: string;
+  average_daily_executions: number;
+  top_executing_users: TopUser[];
+}
+
+export interface ConversionMetrics {
+  trial_to_paid_rate: number;
+  free_to_paid_rate: number;
+  upgrade_rate: number;
+  time_to_conversion_days: number;
+  conversion_revenue: number;
+}
+
+export interface ChurnMetrics {
+  churn_rate: number;
+  churned_revenue: number;
+  churn_reasons: Record<string, number>;
+  at_risk_customers: number;
+}
+
+// Pricing Calculator
+export interface PricingCalculation {
+  base_price: number;
+  overage_charges: OverageCharges;
+  discounts: PricingDiscount[];
+  taxes: PricingTax[];
+  total_amount: number;
+  currency: string;
+  billing_cycle: BillingCycle;
+}
+
+export interface PricingDiscount {
+  type: DiscountType;
+  name: string;
+  amount: number;
+  percentage?: number;
+  code?: string;
+}
+
+export enum DiscountType {
+  PERCENTAGE = 'percentage',
+  FIXED_AMOUNT = 'fixed_amount',
+  FIRST_MONTH_FREE = 'first_month_free',
+  ANNUAL_DISCOUNT = 'annual_discount'
+}
+
+export interface PricingTax {
+  name: string;
+  rate: number;
+  amount: number;
+  jurisdiction: string;
+}
+
+export enum BillingCycle {
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly'
+}
+
+// Feature Flags & A/B Testing
+export interface FeatureFlag {
+  id: string;
+  name: string;
+  description: string;
+  is_enabled: boolean;
+  rollout_percentage: number;
+  target_plans: PlanTier[];
+  target_organizations: string[];
+  conditions: FeatureFlagCondition[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FeatureFlagCondition {
+  type: 'plan_tier' | 'organization_id' | 'user_role' | 'company_size';
+  operator: 'equals' | 'not_equals' | 'in' | 'not_in';
+  value: string | string[];
+}
