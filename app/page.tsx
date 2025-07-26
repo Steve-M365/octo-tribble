@@ -6,6 +6,7 @@ import SearchFilters from '@/components/SearchFilters'
 import RecruiterList from '@/components/RecruiterList'
 import AgencyList from '@/components/AgencyList'
 import Navigation from '@/components/Navigation'
+import DataCollectionDashboard from '@/components/DataCollectionDashboard'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('search')
@@ -160,12 +161,7 @@ export default function Home() {
             )}
             
             {activeTab === 'analytics' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Analytics Dashboard</h2>
-                <p className="text-gray-600">
-                  Analytics and insights coming soon...
-                </p>
-              </div>
+              <DataCollectionDashboard />
             )}
             
             {activeTab === 'export' && (
