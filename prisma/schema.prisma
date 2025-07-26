@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Country {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  code      String   @unique // ISO country code
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  regions  Region[]
+  agencies Agency[]
+
+  @@map("countries")
+}
+
+model Region {
+  id        String   @id @default(cuid())
+  name      String
+  countryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  cities  City[]
+
+  @@unique([name, countryId])
+  @@map("regions")
+}
+
+model City {
+  id        String   @id @default(cuid())
+  name      String
+  regionId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  region   Region    @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  agencies Agency[]
+
+  @@unique([name, regionId])
+  @@map("cities")
+}
+
+model Agency {
+  id          String        @id @default(cuid())
+  name        String
+  website     String?
+  description String?
+  size        AgencySize    @default(MEDIUM)
+  tier        AgencyTier    @default(REGIONAL)
+  countryId   String
+  cityId      String?
+  verified    Boolean       @default(false)
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  country    Country     @relation(fields: [countryId], references: [id])
+  city       City?       @relation(fields: [cityId], references: [id])
+  recruiters Recruiter[]
+  contacts   Contact[]
+  panels     Panel[]
+
+  @@map("agencies")
+}
+
+model Recruiter {
+  id        String           @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  linkedin  String?
+  title     String?
+  seniority RecruiterLevel   @default(JUNIOR)
+  agencyId  String
+  active    Boolean          @default(true)
+  verified  Boolean          @default(false)
+  lastSeen  DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  agency   Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  contacts Contact[]
+
+  @@unique([email, agencyId])
+  @@map("recruiters")
+}
+
+model Contact {
+  id          String        @id @default(cuid())
+  type        ContactType
+  value       String
+  verified    Boolean       @default(false)
+  primary     Boolean       @default(false)
+  source      ContactSource @default(MANUAL)
+  agencyId    String?
+  recruiterId String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  agency    Agency?    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  recruiter Recruiter? @relation(fields: [recruiterId], references: [id], onDelete: Cascade)
+
+  @@map("contacts")
+}
+
+model Panel {
+  id          String     @id @default(cuid())
+  companyName String
+  industry    String?
+  size        PanelSize
+  agencyId    String
+  verified    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyName, agencyId])
+  @@map("panels")
+}
+
+model SearchLog {
+  id        String      @id @default(cuid())
+  query     String
+  source    SearchSource
+  results   Int         @default(0)
+  success   Boolean     @default(true)
+  error     String?
+  createdAt DateTime    @default(now())
+
+  @@map("search_logs")
+}
+
+enum AgencySize {
+  BOUTIQUE
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
+}
+
+enum AgencyTier {
+  LOCAL
+  REGIONAL
+  NATIONAL
+  INTERNATIONAL
+  GLOBAL
+}
+
+enum RecruiterLevel {
+  INTERN
+  JUNIOR
+  SENIOR
+  PRINCIPAL
+  DIRECTOR
+  PARTNER
+}
+
+enum ContactType {
+  EMAIL
+  PHONE
+  LINKEDIN
+  WEBSITE
+  ADDRESS
+}
+
+enum ContactSource {
+  MANUAL
+  GOOGLE
+  LINKEDIN
+  COMPANY_WEBSITE
+  JOB_BOARD
+  DIRECTORY
+}
+
+enum PanelSize {
+  STARTUP
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
+  FORTUNE_500
+}
+
+enum SearchSource {
+  GOOGLE
+  LINKEDIN
+  INDEED
+  GLASSDOOR
+  COMPANY_WEBSITE
+  DIRECTORY
+}
