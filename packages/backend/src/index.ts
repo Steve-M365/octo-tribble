@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import dotenv from 'dotenv';
@@ -21,6 +20,17 @@ import { serviceDeskRoutes } from './routes/serviceDesk';
 import { setupWebSocket } from './websocket/handler';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
+import { 
+  securityHeaders, 
+  corsOptions, 
+  apiRateLimiter, 
+  authRateLimiter, 
+  executionRateLimiter,
+  sanitizeInput,
+  securityAudit,
+  apiSecurityHeaders,
+  requestSizeLimiter
+} from './middleware/security';
 
 // Load environment variables
 dotenv.config();
@@ -34,25 +44,29 @@ const server = createServer(app);
 // Create WebSocket server
 const wss = new WebSocketServer({ server });
 
-// Security middleware
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
+// Enhanced security middleware
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+app.use(apiSecurityHeaders);
+app.use(securityAudit);
+app.use(requestSizeLimiter('50mb'));
+app.use(sanitizeInput('general'));
+
+// Apply rate limiting globally
+app.use(apiRateLimiter);
 
 // Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Request logging
 app.use(requestLogger);
 
-// API Routes
-app.use('/api/auth', authRoutes);
+// API Routes with specific rate limiting
+app.use('/api/auth', authRateLimiter, authRoutes);
 app.use('/api/scripts', scriptRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/execution', executionRoutes);
+app.use('/api/execution', executionRateLimiter, executionRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/sharing', sharingRoutes);
 app.use('/api/help', helpRoutes);

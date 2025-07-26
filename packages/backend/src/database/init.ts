@@ -294,29 +294,103 @@ async function createTables(db: Database): Promise<void> {
   await db.run(`CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON service_tickets(created_at)`);
   await db.run(`CREATE INDEX IF NOT EXISTS idx_ticket_notes_ticket_id ON ticket_notes(ticket_id)`);
 
-  // Sharing system tables
-  await db.run(`
-    CREATE TABLE IF NOT EXISTS shareable_links (
-      id TEXT PRIMARY KEY,
-      resource_type TEXT NOT NULL,
-      resource_id TEXT NOT NULL,
-      share_token TEXT UNIQUE NOT NULL,
-      created_by TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-      expires_at DATETIME,
-      access_level TEXT NOT NULL DEFAULT 'view_only',
-      password_protected BOOLEAN DEFAULT 0,
-      password_hash TEXT,
-      max_uses INTEGER,
-      current_uses INTEGER DEFAULT 0,
-      is_active BOOLEAN DEFAULT 1,
-      title TEXT NOT NULL,
-      description TEXT,
-      thumbnail_url TEXT,
-      metadata TEXT DEFAULT '{}',
-      FOREIGN KEY (created_by) REFERENCES users(id)
-    )
-  `);
+          // Security-related tables
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS refresh_tokens (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            token TEXT UNIQUE NOT NULL,
+            expires_at DATETIME NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_used_at DATETIME,
+            ip_address TEXT NOT NULL,
+            user_agent TEXT NOT NULL,
+            is_revoked BOOLEAN DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+          )
+        `);
+
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS login_attempts (
+            id TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            ip_address TEXT NOT NULL,
+            user_agent TEXT NOT NULL,
+            success BOOLEAN NOT NULL,
+            failure_reason TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+          )
+        `);
+
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS script_signatures (
+            id TEXT PRIMARY KEY,
+            script_id TEXT NOT NULL,
+            hash TEXT NOT NULL,
+            algorithm TEXT NOT NULL,
+            signed_by TEXT NOT NULL,
+            signature_data TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            is_valid BOOLEAN DEFAULT 1,
+            FOREIGN KEY (script_id) REFERENCES scripts(id),
+            FOREIGN KEY (signed_by) REFERENCES users(id)
+          )
+        `);
+
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS security_scans (
+            id TEXT PRIMARY KEY,
+            script_id TEXT NOT NULL,
+            scan_type TEXT NOT NULL,
+            security_score INTEGER NOT NULL,
+            risk_count INTEGER NOT NULL,
+            is_secure BOOLEAN NOT NULL,
+            scan_results TEXT NOT NULL,
+            scanned_by TEXT NOT NULL,
+            scanned_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (script_id) REFERENCES scripts(id),
+            FOREIGN KEY (scanned_by) REFERENCES users(id)
+          )
+        `);
+
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS api_keys (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            name TEXT NOT NULL,
+            key_hash TEXT UNIQUE NOT NULL,
+            permissions TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            expires_at DATETIME,
+            last_used_at DATETIME,
+            is_active BOOLEAN DEFAULT 1,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+          )
+        `);
+
+        // Sharing system tables
+        await db.run(`
+          CREATE TABLE IF NOT EXISTS shareable_links (
+            id TEXT PRIMARY KEY,
+            resource_type TEXT NOT NULL,
+            resource_id TEXT NOT NULL,
+            share_token TEXT UNIQUE NOT NULL,
+            created_by TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            expires_at DATETIME,
+            access_level TEXT NOT NULL DEFAULT 'view_only',
+            password_protected BOOLEAN DEFAULT 0,
+            password_hash TEXT,
+            max_uses INTEGER,
+            current_uses INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT 1,
+            title TEXT NOT NULL,
+            description TEXT,
+            thumbnail_url TEXT,
+            metadata TEXT DEFAULT '{}',
+            FOREIGN KEY (created_by) REFERENCES users(id)
+          )
+        `);
 
   await db.run(`
     CREATE TABLE IF NOT EXISTS share_access_logs (
