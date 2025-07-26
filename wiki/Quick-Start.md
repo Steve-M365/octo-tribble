@@ -13,7 +13,7 @@ Get ScriptFlow up and running in 5 minutes! This guide will have you executing y
 
 ```bash
 # Clone the repository
-git clone https://github.com/scriptflow/scriptflow.git
+git clone https://github.com/Steve-M365/scriptflow.git
 cd scriptflow
 
 # Start with Docker Compose
@@ -245,8 +245,8 @@ docker-compose up -d
 
 ### Community Support
 - **Discord**: [Join our community](https://discord.gg/scriptflow)
-- **GitHub Issues**: [Report problems](https://github.com/scriptflow/scriptflow/issues)
-- **Discussions**: [Ask questions](https://github.com/scriptflow/scriptflow/discussions)
+- **GitHub Issues**: [Report problems](https://github.com/Steve-M365/scriptflow/issues)
+- **Discussions**: [Ask questions](https://github.com/Steve-M365/scriptflow/discussions)
 
 ### Professional Support
 - **Email**: support@scriptflow.dev

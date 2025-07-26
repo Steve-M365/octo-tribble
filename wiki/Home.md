@@ -139,12 +139,12 @@ See our [Contributing Guide](Contributing) for detailed information.
 
 ## 📄 License
 
-ScriptFlow is released under the [MIT License](https://github.com/scriptflow/scriptflow/blob/main/LICENSE).
+ScriptFlow is released under the [MIT License](https://github.com/Steve-M365/scriptflow/blob/main/LICENSE).
 
 ## 🔗 Quick Links
 
 - **🏠 Homepage**: [scriptflow.dev](https://scriptflow.dev)
-- **📁 GitHub Repository**: [github.com/scriptflow/scriptflow](https://github.com/scriptflow/scriptflow)
+- **📁 GitHub Repository**: [github.com/Steve-M365/scriptflow](https://github.com/Steve-M365/scriptflow)
 - **📖 Documentation**: [docs.scriptflow.dev](https://docs.scriptflow.dev)
 - **💬 Community**: [community.scriptflow.dev](https://community.scriptflow.dev)
 - **🐦 Twitter**: [@ScriptFlow](https://twitter.com/scriptflow)

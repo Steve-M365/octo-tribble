@@ -1,12 +1,12 @@
 # 🚀 ScriptFlow - Enterprise Script Management Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/scriptflow/scriptflow/workflows/CI/badge.svg)](https://github.com/scriptflow/scriptflow/actions)
+[![Build Status](https://github.com/Steve-M365/scriptflow/workflows/CI/badge.svg)](https://github.com/Steve-M365/scriptflow/actions)
 [![Docker Pulls](https://img.shields.io/docker/pulls/scriptflow/scriptflow)](https://hub.docker.com/r/scriptflow/scriptflow)
 [![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?color=7289da&label=Discord&logo=discord&logoColor=white)](https://discord.gg/scriptflow)
-[![Contributors](https://img.shields.io/github/contributors/scriptflow/scriptflow)](https://github.com/scriptflow/scriptflow/graphs/contributors)
-[![Test Coverage](https://img.shields.io/codecov/c/github/scriptflow/scriptflow)](https://codecov.io/gh/scriptflow/scriptflow)
-[![Security Rating](https://img.shields.io/snyk/vulnerabilities/github/scriptflow/scriptflow)](https://snyk.io/test/github/scriptflow/scriptflow)
+[![Contributors](https://img.shields.io/github/contributors/Steve-M365/scriptflow)](https://github.com/Steve-M365/scriptflow/graphs/contributors)
+[![Test Coverage](https://img.shields.io/codecov/c/github/Steve-M365/scriptflow)](https://codecov.io/gh/Steve-M365/scriptflow)
+[![Security Rating](https://img.shields.io/snyk/vulnerabilities/github/Steve-M365/scriptflow)](https://snyk.io/test/github/Steve-M365/scriptflow)
 
 > **A modern, secure, and user-friendly platform for managing and executing scripts across Windows, macOS, and Linux environments with enterprise-grade features.**
 
@@ -45,7 +45,7 @@ ScriptFlow empowers IT teams and service desks to centralize script management, 
 
 ```bash
 # Clone the repository
-git clone https://github.com/scriptflow/scriptflow.git
+git clone https://github.com/Steve-M365/scriptflow.git
 cd scriptflow
 
 # Start with Docker Compose
@@ -68,7 +68,7 @@ open http://localhost:3000
 
 ```bash
 # Clone and install dependencies
-git clone https://github.com/scriptflow/scriptflow.git
+git clone https://github.com/Steve-M365/scriptflow.git
 cd scriptflow
 npm run install:all
 
@@ -139,9 +139,9 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 ### Ways to Contribute
 
-- 🐛 **Report Bugs** - [Create an issue](https://github.com/scriptflow/scriptflow/issues/new?template=bug_report.md)
-- 💡 **Request Features** - [Submit feature requests](https://github.com/scriptflow/scriptflow/issues/new?template=feature_request.md)
-- 🔧 **Submit Code** - [Create pull requests](https://github.com/scriptflow/scriptflow/pulls)
+- 🐛 **Report Bugs** - [Create an issue](https://github.com/Steve-M365/scriptflow/issues/new?template=bug_report.md)
+- 💡 **Request Features** - [Submit feature requests](https://github.com/Steve-M365/scriptflow/issues/new?template=feature_request.md)
+- 🔧 **Submit Code** - [Create pull requests](https://github.com/Steve-M365/scriptflow/pulls)
 - 📚 **Improve Docs** - Help with documentation
 - 🌍 **Translate** - Add language support
 - 💬 **Community Support** - Help others in discussions
@@ -254,14 +254,14 @@ While ScriptFlow is open source and free to use, we offer commercial services:
 - 🎯 **Edge Computing** - Distributed execution capabilities
 - 🎯 **Compliance Automation** - Automated compliance reporting and validation
 
-View our [detailed roadmap](https://github.com/scriptflow/scriptflow/projects/1) for more information.
+View our [detailed roadmap](https://github.com/Steve-M365/scriptflow/projects/1) for more information.
 
 ## 🌟 Community
 
 Join our growing community of developers, IT professionals, and organizations using ScriptFlow:
 
 - **[Discord Server](https://discord.gg/scriptflow)** - Real-time chat and support
-- **[GitHub Discussions](https://github.com/scriptflow/scriptflow/discussions)** - Community Q&A and ideas
+- **[GitHub Discussions](https://github.com/Steve-M365/scriptflow/discussions)** - Community Q&A and ideas
 - **[Reddit Community](https://reddit.com/r/scriptflow)** - News and discussions
 - **[LinkedIn Group](https://linkedin.com/groups/scriptflow)** - Professional networking
 - **[Twitter](https://twitter.com/scriptflow_dev)** - Updates and announcements
@@ -329,6 +329,6 @@ Special thanks to all our contributors, sponsors, and the open source community:
 
 **Made with ❤️ by the ScriptFlow community**
 
-[⭐ Star us on GitHub](https://github.com/scriptflow/scriptflow) | [🐦 Follow on Twitter](https://twitter.com/scriptflow_dev) | [💬 Join Discord](https://discord.gg/scriptflow)
+[⭐ Star us on GitHub](https://github.com/Steve-M365/scriptflow) | [🐦 Follow on Twitter](https://twitter.com/scriptflow_dev) | [💬 Join Discord](https://discord.gg/scriptflow)
 
 </div>

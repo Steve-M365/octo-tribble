@@ -1,8 +1,16 @@
 {
-  "name": "script-manager-app",
+  "name": "scriptflow",
   "version": "1.0.0",
   "description": "Enterprise Script Management Platform with IDE interface",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Steve-M365/scriptflow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Steve-M365/scriptflow/issues"
+  },
+  "homepage": "https://github.com/Steve-M365/scriptflow#readme",
   "workspaces": [
     "packages/*"
   ],

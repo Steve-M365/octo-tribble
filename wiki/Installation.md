@@ -24,7 +24,7 @@ This guide provides step-by-step instructions for installing ScriptFlow in vario
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/scriptflow/scriptflow.git
+   git clone https://github.com/Steve-M365/scriptflow.git
    cd scriptflow
    ```
 
@@ -97,7 +97,7 @@ brew install node postgresql
 
 1. **Clone and setup**:
    ```bash
-   git clone https://github.com/scriptflow/scriptflow.git
+   git clone https://github.com/Steve-M365/scriptflow.git
    cd scriptflow
    npm run install:all
    ```
@@ -384,7 +384,7 @@ If you encounter issues:
 
 1. Check the [Troubleshooting](Troubleshooting) page
 2. Review [FAQ](FAQ) for common questions
-3. Search [GitHub Issues](https://github.com/scriptflow/scriptflow/issues)
+3. Search [GitHub Issues](https://github.com/Steve-M365/scriptflow/issues)
 4. Join our [Discord community](https://discord.gg/scriptflow)
 5. Contact support: support@scriptflow.dev
 
@@ -400,4 +400,4 @@ After installation:
 
 ---
 
-**Need help?** Join our [Discord](https://discord.gg/scriptflow) or create an [issue](https://github.com/scriptflow/scriptflow/issues).
+**Need help?** Join our [Discord](https://discord.gg/scriptflow) or create an [issue](https://github.com/Steve-M365/scriptflow/issues).

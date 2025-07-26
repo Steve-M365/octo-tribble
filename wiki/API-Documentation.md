@@ -740,7 +740,7 @@ Full OpenAPI 3.0 specification available at:
 
 - **API Documentation**: https://docs.scriptflow.dev/api
 - **SDK Docs**: https://docs.scriptflow.dev/sdk
-- **GitHub Issues**: https://github.com/scriptflow/scriptflow/issues
+- **GitHub Issues**: https://github.com/Steve-M365/scriptflow/issues
 - **Discord**: https://discord.gg/scriptflow
 - **Email**: api-support@scriptflow.dev
 

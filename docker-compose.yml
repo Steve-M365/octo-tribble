@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: scriptflow/scriptflow:latest
+    image: steve-m365/scriptflow:latest
     container_name: scriptflow-app
     restart: unless-stopped
     ports:

@@ -457,7 +457,7 @@ We use labels to categorize issues:
 
 ## 🎯 Good First Issues
 
-Looking for your first contribution? Check out issues labeled [`good first issue`](https://github.com/scriptflow/scriptflow/labels/good%20first%20issue).
+Looking for your first contribution? Check out issues labeled [`good first issue`](https://github.com/Steve-M365/scriptflow/labels/good%20first%20issue).
 
 These are typically:
 - Documentation improvements
@@ -485,8 +485,8 @@ We recognize contributors in various ways:
 
 ### Community Support
 - **Discord**: [Join our community](https://discord.gg/scriptflow)
-- **GitHub Issues**: [Report problems](https://github.com/scriptflow/scriptflow/issues)
-- **Discussions**: [Ask questions](https://github.com/scriptflow/scriptflow/discussions)
+- **GitHub Issues**: [Report problems](https://github.com/Steve-M365/scriptflow/issues)
+- **Discussions**: [Ask questions](https://github.com/Steve-M365/scriptflow/discussions)
 
 ### Professional Support
 - **Email**: support@scriptflow.dev
@@ -494,7 +494,7 @@ We recognize contributors in various ways:
 
 ## 📄 License
 
-By contributing to ScriptFlow, you agree that your contributions will be licensed under the [MIT License](https://github.com/scriptflow/scriptflow/blob/main/LICENSE).
+By contributing to ScriptFlow, you agree that your contributions will be licensed under the [MIT License](https://github.com/Steve-M365/scriptflow/blob/main/LICENSE).
 
 ---
 

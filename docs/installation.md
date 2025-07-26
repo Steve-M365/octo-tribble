@@ -49,7 +49,7 @@ This guide provides detailed instructions for installing and configuring ScriptF
 #### Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/scriptflow/scriptflow.git
+git clone https://github.com/Steve-M365/scriptflow.git
 cd scriptflow
 
 # Copy environment configuration
@@ -170,7 +170,7 @@ choco install nodejs postgresql git
 
 ```bash
 # Clone repository
-git clone https://github.com/scriptflow/scriptflow.git
+git clone https://github.com/Steve-M365/scriptflow.git
 cd scriptflow
 
 # Install dependencies
@@ -232,7 +232,7 @@ helm repo add scriptflow https://charts.scriptflow.dev
 helm repo update
 
 # Install with custom values
-helm install scriptflow scriptflow/scriptflow \
+helm install scriptflow steve-m365/scriptflow \
   --set database.type=postgresql \
   --set ingress.enabled=true \
   --set ingress.hostname=scriptflow.yourdomain.com
@@ -260,7 +260,7 @@ spec:
     spec:
       containers:
       - name: scriptflow
-        image: scriptflow/scriptflow:latest
+        image: steve-m365/scriptflow:latest
         ports:
         - containerPort: 3000
         env:
@@ -615,7 +615,7 @@ psql -d scriptflow -c "SELECT * FROM pg_stat_statements ORDER BY total_time DESC
 
 - **Documentation**: https://docs.scriptflow.dev
 - **Community Forum**: https://community.scriptflow.dev
-- **GitHub Issues**: https://github.com/scriptflow/scriptflow/issues
+- **GitHub Issues**: https://github.com/Steve-M365/scriptflow/issues
 - **Discord Support**: https://discord.gg/scriptflow
 - **Professional Support**: support@scriptflow.dev
 
